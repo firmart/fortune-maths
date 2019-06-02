@@ -1,3 +1,11 @@
+Dependencies
+============
+- python3 : `sudo apt install python3`
+- fortune : `sudo apt install fortune`
+
+Install
+=======
+`sudo make install`
 
 
 TODO

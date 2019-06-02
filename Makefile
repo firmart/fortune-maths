@@ -24,7 +24,7 @@ clean:
 	-rm -f $(DATA)
 	-rm -f $(TEXTS)
 
-install: all
+install: clean all
 	mkdir -p $(DESTDIR)$(FORTUNES)
 	install -m0644  $(TEXTS) $(DATA)  $(DESTDIR)$(FORTUNES)
 
