@@ -17,3 +17,4 @@ TODO
    - supporting option `-P <theoreme-code>` : generate proofs latex/pdf file
 2. Add fortunes' version with hyperlink on maths wikipage. These fortunes will be put in `/usr/share/games/fortunes/off` 
 3. Add more ansi markup
+4. Consider `TERM=dumb` and avoid any ansi markup 
