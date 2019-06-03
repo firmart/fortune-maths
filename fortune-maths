@@ -1,0 +1,37 @@
+#!/usr/bin/env bash 
+# fortune-maths
+set -e
+
+FORTUNE="/usr/games/fortune"
+[ -x $FORTUNE ] || ( echo "E: Please install package 'fortune-mod'."; false )
+
+optspec="l:p:L:h"
+while getopts "$optspec" optchar; do
+    case "${optchar}" in
+	# long options
+        h)
+            echo "usage: $0 [-l] [-p [-L <lang>] [-n <num>]] [<thm-code>]" >&2
+            exit 2
+            ;;
+        l)
+            echo "Parsing option: '-${optchar}' '${OPTARG}'" >&2
+            ;;
+        p)
+            echo "Parsing option: '-${optchar}' '${OPTARG}'" >&2
+            ;;
+        L)
+            echo "Parsing option: '-${optchar}' '${OPTARG}'" >&2
+            ;;
+        *)
+            if [ "$OPTERR" != 1 ] || [ "${optspec:0:1}" = ":" ]; then
+                echo "Non-option argument: '-${OPTARG}'" >&2
+            fi
+            ;;
+    esac
+done
+
+DICT="50% logic 50% models"
+DATA=`$FORTUNE $DICT`
+HEADER=`echo "${DATA}" | head -n +1`
+TEXT=`echo "${DATA}" | tail -n +2`
+echo  "${TEXT}"

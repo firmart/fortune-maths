@@ -1,5 +1,5 @@
 # from https://en.wikipedia.org/wiki/L%C3%B6wenheim%E2%80%93Skolem_theorem
-The *Löwenheim–Skolem theorem* states that for every signature σ, 
+The **Löwenheim–Skolem theorem** states that for every signature σ, 
 every infinite σ-structure M and every infinite cardinal number κ ≥ |σ|, 
 there is a σ-structure N such that |N| = κ and
 
