@@ -12,5 +12,6 @@ TODO
 ====
 
 1. Add a `fortune` wrapper `fortune-maths`
-   - supporting option `-L` : generate latex/pdf file
-   - supporting option `-P` : generate proofs latex file
+   - supporting option `-L <theoreme-code>` : generate latex/pdf file
+   - supporting option `-P <theoreme-code>` : generate proofs latex/pdf file
+2. Add fortunes' version with hyperlink on maths wikipage. These fortunes will be put in `/usr/share/games/fortunes/off` 
