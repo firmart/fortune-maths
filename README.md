@@ -1,16 +1,18 @@
-Dependencies
-============
+## Screenshots
+
+![screenshot 1][img/screenshot_1.png]
+
+## Dependencies
+
 - perl (for markup-ansi conversion) : `sudo apt install perl`
 - python3 (for cookie/data conversion) : `sudo apt install python3`
 - fortune (to display data) : `sudo apt install fortune`
 
-Install
-=======
+## Install
 `sudo make install`
 
 
-TODO
-====
+## TODO
 
 1. Add a `fortune` wrapper `fortune-maths`
    - supporting option `-L <theoreme-code>` : generate latex/pdf file
