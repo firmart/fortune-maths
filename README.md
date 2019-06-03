@@ -1,6 +1,6 @@
 ## Screenshots
 
-![screenshot 1][img/screenshot_1.png]
+![screenshot 1](img/screenshot_1.png)
 
 ## Dependencies
 
