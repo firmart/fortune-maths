@@ -18,5 +18,6 @@
 2. Describe formats used
     - use inline bibtex for proofs.
 3. Explain options
-4. Release it as an ubuntu package
+4. Use pandoc to simplify workflow e.g. `fortune-maths -l -p | pandoc -f latex -t plain`
+5. Release it as an ubuntu package
 
