@@ -3,24 +3,41 @@
 set -e
 
 FORTUNE="/usr/games/fortune"
+PROOFS="/usr/local/share/games/fortunes/proofs"
 [ -x $FORTUNE ] || ( echo "E: Please install package 'fortune-mod'."; false )
+LANG="*"
+NUM=1000
+LATEX_FLAG=0
+APROPOS_ARG=""
+PROOF_FLAG=0
+SHOW_FLAG=0
+CODE=""
 
-optspec="l:p:L:h"
+optspec="a:n:lspL:h"
 while getopts "$optspec" optchar; do
     case "${optchar}" in
 	# long options
         h)
-            echo "usage: $0 [-l] [-p [-L <lang>] [-n <num>]] [<thm-code>]" >&2
+            echo "usage: $0 [[-a <pattern>] | [[[-l [-p [-L <lang>] [-n <num>]]] | [-s]] [<thm-code>]]]" >&2
             exit 2
             ;;
+        a)
+            APROPOS_ARG="${OPTARG}"
+            ;;
         l)
-            echo "Parsing option: '-${optchar}' '${OPTARG}'" >&2
+            LATEX_FLAG=1
             ;;
         p)
-            echo "Parsing option: '-${optchar}' '${OPTARG}'" >&2
+            PROOF_FLAG=1
+            ;;
+        s)
+            SHOW_FLAG=1
+            ;;
+        n)
+            NUM="${OPTARG}"
             ;;
         L)
-            echo "Parsing option: '-${optchar}' '${OPTARG}'" >&2
+            LANG="${OPTARG}"
             ;;
         *)
             if [ "$OPTERR" != 1 ] || [ "${optspec:0:1}" = ":" ]; then
@@ -32,6 +49,32 @@ done
 
 DICT="50% logic 50% models"
 DATA=`$FORTUNE $DICT`
-HEADER=`echo "${DATA}" | head -n +1`
+FILENAME=`echo "${DATA}" | head -n +1`
 TEXT=`echo "${DATA}" | tail -n +2`
-echo  "${TEXT}"
+if [ "$LATEX_FLAG" -eq 1 ]; then
+    # output latex 
+    printf '\\documentclass{article}\n'
+    printf '\\begin{document}\n'
+    printf '\\section*{The Theorem}\n'
+    cat  "$PROOFS/$FILENAME.tex"
+    if [ "$PROOF_FLAG" -eq 1 ]; then
+        # statement + proof
+        count=1
+        proofs_list="$(find $PROOFS -type f,l -name "$FILENAME.$LANG.*.tex" -print)"
+        if [ `echo "${proofs_list}" | sed '/^\s*$/d' |  wc -l` -gt 0 ]; then
+            printf '\\section*{Proofs}\n'
+            printf '\\begin{itemize}\n'
+            for f in `echo "${proofs_list}" | head -n $NUM`; do
+                printf "\\\\item \\\\textbf{proof $(( count++ ))} "
+                cat $f
+            done
+            printf '\\end{itemize}\n'
+        fi
+    fi
+    printf '\\end{document}\n'
+elif [ "$APROPOS_ARG" != "" ]; then
+    $FORTUNE -m "$APROPOS_ARG" $DICT 2> /dev/null | tail -n +2 | head -n -1
+else 
+    if [ "$SHOW_FLAG" -eq 1 ]; then echo "<${FILENAME}>"; fi
+    echo  "${TEXT}"
+fi

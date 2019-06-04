@@ -1,5 +1,7 @@
+PREFIX=/usr/local
 DESTDIR=
-FORTUNES=/usr/share/games/fortunes
+GAMES=$(PREFIX)/games
+FORTUNES=$(PREFIX)/share/games/fortunes
 PROOFSDIR=$(DESTDIR)$(FORTUNES)/proofs
 
 TEXTS=$(patsubst %.d,%,$(wildcard *.d))
@@ -29,6 +31,7 @@ install: clean all
 	mkdir -p $(DESTDIR)$(FORTUNES)
 	mkdir -p $(PROOFSDIR)
 	install -m0644  $(PROOFS) $(PROOFSDIR)
+	install -m0755  fortune-maths      $(DESTDIR)$(GAMES)
 	install -m0644  $(TEXTS) $(DATA)  $(DESTDIR)$(FORTUNES)
 
 .PHONY: install clean distclean all

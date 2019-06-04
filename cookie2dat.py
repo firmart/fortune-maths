@@ -33,7 +33,7 @@ def cookie2dat(src: str) -> None:
     '''
     dest = src.replace('.cookie', '.dat')
     with open(src, 'r') as fsrc, open(dest, 'w') as fdest:
-        fdest.writelines(['<' + os.path.basename(src).replace('.cookie', '') +'>\n']+ delComment(fsrc.readlines(), [], False) + ['%\n'])
+        fdest.writelines([os.path.basename(src).replace('.cookie', '') +'\n']+ delComment(fsrc.readlines(), [], False) + ['%\n'])
     print(f'{__file__}: Converted {src} -> {dest}')
 
 
