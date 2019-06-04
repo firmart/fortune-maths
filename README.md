@@ -14,9 +14,9 @@
 
 ## TODO
 
-1. Add a `fortune` wrapper `fortune-maths`
-   - supporting option `-L <theoreme-code>` : generate latex/pdf file
-   - supporting option `-P <theoreme-code>` : generate proofs latex/pdf file
-2. Add fortunes' version with hyperlink on maths wikipage. These fortunes will be put in `/usr/share/games/fortunes/off` 
-3. Add more ansi markup
-4. Consider `TERM=dumb` and avoid any ansi markup 
+1. Add more ansi markup
+2. Describe formats used
+    - use inline bibtex for proofs.
+3. Explain options
+4. Release it as an ubuntu package
+

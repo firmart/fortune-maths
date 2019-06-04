@@ -75,6 +75,10 @@ if [ "$LATEX_FLAG" -eq 1 ]; then
 elif [ "$APROPOS_ARG" != "" ]; then
     $FORTUNE -m "$APROPOS_ARG" $DICT 2> /dev/null | tail -n +2 | head -n -1
 else 
+    if [ "$PROOF_FLAG" -eq 1 ]; then 
+        echo "usage: $0 [[-a <pattern>] | [[[-l [-p [-L <lang>] [-n <num>]]] | [-s]] [<thm-code>]]]" >&2
+        exit 2
+    fi
     if [ "$SHOW_FLAG" -eq 1 ]; then echo "<${FILENAME}>"; fi
     echo  "${TEXT}"
 fi
