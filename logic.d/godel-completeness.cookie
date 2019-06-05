@@ -1,7 +1,0 @@
-# from https://en.wikipedia.org/wiki/G%C3%B6del%27s_completeness_theorem
-The **Gödel completeness theorem** says that 
-for any first-order theory T with a *well-orderable* language, and any *sentence* s in the language of T,
-
-if T ⊧ s, then T ⊦ s.
-
-Since the converse (soundness) also holds, it follows that T ⊧ s iff T ⊦ s.

@@ -15,8 +15,6 @@ data:
 
 $(TEXTS): data
 	find $@.d -type f,l -name '*.dat' -print0 | LC_ALL=C sort -z | xargs -0r cat | cat >> $@
-	perl -i -pe 's|\*\*(.*?)\*\*|\033[34;1m\1\033[0m|g' $@  # non-greedy blue + bold style replace
-	perl -i -pe 's|\*(.*?)\*|\033[35;3m\1\033[0m|g' $@  # non-greedy italic style replace
 	strfile $@ $@.dat
 
 distclean: clean

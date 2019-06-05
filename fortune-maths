@@ -2,83 +2,98 @@
 # fortune-maths
 set -e
 
-FORTUNE="/usr/games/fortune"
+usage() {
+    echo "usage: $1 [[-a <pattern>] | [[[-l [-p [-L <lang>] [-n <num>]]] | [-s]] [<thm-code>]]]" >&2
+}
+
+FORTUNE="fortune"
 PROOFS="/usr/local/share/games/fortunes/proofs"
-[ -x $FORTUNE ] || ( echo "E: Please install package 'fortune-mod'."; false )
+command -v $FORTUNE > /dev/null || ( echo "E: Please install package 'fortune-mod'."; false )
+
 LANG="*"
 NUM=1000
 LATEX_FLAG=0
-APROPOS_ARG=""
+PDF_FLAG=0
+SEARCH_ARG=""
 PROOF_FLAG=0
 SHOW_FLAG=0
 CODE=""
 
-optspec="a:n:lspL:h"
+optspec="n:l:s:SpPLh"
 while getopts "$optspec" optchar; do
     case "${optchar}" in
-	# long options
+        # long options
         h)
-            echo "usage: $0 [[-a <pattern>] | [[[-l [-p [-L <lang>] [-n <num>]]] | [-s]] [<thm-code>]]]" >&2
+            usage $0
             exit 2
             ;;
-        a)
-            APROPOS_ARG="${OPTARG}"
+        s)
+            SEARCH_ARG="${OPTARG}"
             ;;
-        l)
+        L)
             LATEX_FLAG=1
+            ;;
+        P)
+            PDF_FLAG=1
             ;;
         p)
             PROOF_FLAG=1
             ;;
-        s)
+        S)
             SHOW_FLAG=1
             ;;
         n)
             NUM="${OPTARG}"
             ;;
-        L)
+        l)
             LANG="${OPTARG}"
             ;;
         *)
             if [ "$OPTERR" != 1 ] || [ "${optspec:0:1}" = ":" ]; then
                 echo "Non-option argument: '-${OPTARG}'" >&2
             fi
+            exit 2
             ;;
     esac
 done
 
+
 DICT="50% logic 50% models"
 DATA=`$FORTUNE $DICT`
-FILENAME=`echo "${DATA}" | head -n +1`
+THM_FILENAME=$(echo "${DATA}" | head -n +1)
+FILENAME=`basename -s ".thm" "${THM_FILENAME%.*}"`
+THM_NAME=$(echo $FILENAME | sed 's|_| |g')
 TEXT=`echo "${DATA}" | tail -n +2`
-if [ "$LATEX_FLAG" -eq 1 ]; then
-    # output latex 
-    printf '\\documentclass{article}\n'
-    printf '\\begin{document}\n'
-    printf '\\section*{The Theorem}\n'
-    cat  "$PROOFS/$FILENAME.tex"
-    if [ "$PROOF_FLAG" -eq 1 ]; then
-        # statement + proof
-        count=1
-        proofs_list="$(find $PROOFS -type f,l -name "$FILENAME.$LANG.*.tex" -print)"
-        if [ `echo "${proofs_list}" | sed '/^\s*$/d' |  wc -l` -gt 0 ]; then
-            printf '\\section*{Proofs}\n'
-            printf '\\begin{itemize}\n'
-            for f in `echo "${proofs_list}" | head -n $NUM`; do
-                printf "\\\\item \\\\textbf{proof $(( count++ ))} "
-                cat $f
-            done
-            printf '\\end{itemize}\n'
-        fi
-    fi
-    printf '\\end{document}\n'
-elif [ "$APROPOS_ARG" != "" ]; then
-    $FORTUNE -m "$APROPOS_ARG" $DICT 2> /dev/null | tail -n +2 | head -n -1
-else 
-    if [ "$PROOF_FLAG" -eq 1 ]; then 
-        echo "usage: $0 [[-a <pattern>] | [[[-l [-p [-L <lang>] [-n <num>]]] | [-s]] [<thm-code>]]]" >&2
-        exit 2
-    fi
-    if [ "$SHOW_FLAG" -eq 1 ]; then echo "<${FILENAME}>"; fi
-    echo  "${TEXT}"
+
+# output latex 
+OUTPUT="\\section*{The $THM_NAME}"$'\n'
+OUTPUT+=$TEXT
+
+if [ "$SEARCH_ARG" != "" ]; then
+    find $PROOFS -type f,l -name "*.thm.*.tex" -exec grep "$SEARCH_ARG" -l {} \+ | xargs -r basename -a
+    exit 0
 fi
+
+if [ "$PROOF_FLAG" -eq 1 ]; then
+    # statement + proof
+    proofs_list="$(find $PROOFS -type f,l -name "$FILENAME.proof.$LANG.*.tex" -print)"
+    if [ `echo "${proofs_list}" | sed '/^\s*$/d' |  wc -l` -gt 0 ]; then
+        OUTPUT+=$'\\section*{Proofs}\n'
+        OUTPUT+=$'\\begin{itemize}\n'
+        for f in `echo "${proofs_list}" | head -n $NUM`; do
+            OUTPUT+="\\item \\textbf{proof $(( ++proof_count ))} "
+            OUTPUT+=$(cat $f)$'\n'
+        done
+        OUTPUT+=$'\\end{itemize}\n'
+    fi
+fi
+
+if [ "$PDF_FLAG" -eq 1 ]; then
+    echo "${OUTPUT}" | pandoc -f latex -o $FILENAME.pdf 
+elif [ "$LATEX_FLAG" -eq 1 ]; then
+    echo "${OUTPUT}"
+else 
+    if [ "$SHOW_FLAG" -eq 1 ]; then echo "<${FILENAME}>"; fi
+    echo  "${OUTPUT}" | pandoc -f latex -t plain --filter ./behead.py
+fi
+
