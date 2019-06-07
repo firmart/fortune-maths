@@ -23,4 +23,5 @@
 3. Explain options
 4. Use pandoc to simplify workflow e.g. `fortune-maths -l -p | pandoc -f latex -t plain`
 5. Release it as an ubuntu package `*.deb`
+6. Install pandoc filter `ansify.py`
 

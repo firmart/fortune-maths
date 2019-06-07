@@ -65,14 +65,24 @@ FILENAME=`basename -s ".thm" "${THM_FILENAME%.*}"`
 THM_NAME=$(echo $FILENAME | sed 's|_| |g')
 TEXT=`echo "${DATA}" | tail -n +2`
 
+
+if [ "$SEARCH_ARG" != "" ]; then
+    fname_list=`find $PROOFS -type f,l -name "*.thm.*.tex" -exec grep -E "$SEARCH_ARG" -l {} \+ | xargs -r basename -a | awk -F. '{print $(NF-3)}' | sort -u`
+    for fname in $fname_list; do
+        thm_name=`echo $fname | sed 's|_| |g'`
+        printf "%s (" "${thm_name}"
+        find $PROOFS -type f,l -name "$fname.thm.*.tex" -exec grep -E "*" -l {} \+ | xargs -r basename -a | sort -u | awk -F. '{printf "%s/", $(NF-1)}'
+        printf "), proof ("
+        find $PROOFS -type f,l -name "$fname.proof.*.*.tex" -exec grep -E "*" -l {} \+ | xargs -r basename -a  | \
+            awk -F. ' { langs[$(NF-2)]++ } END { for (i in langs) printf "%s[%d]/", i, langs[i] }' 
+        printf ")\n"
+    done
+    exit 0
+fi
+
 # output latex 
 OUTPUT="\\section*{The $THM_NAME}"$'\n'
 OUTPUT+=$TEXT
-
-if [ "$SEARCH_ARG" != "" ]; then
-    find $PROOFS -type f,l -name "*.thm.*.tex" -exec grep "$SEARCH_ARG" -l {} \+ | xargs -r basename -a
-    exit 0
-fi
 
 if [ "$PROOF_FLAG" -eq 1 ]; then
     # statement + proof
@@ -94,6 +104,6 @@ elif [ "$LATEX_FLAG" -eq 1 ]; then
     echo "${OUTPUT}"
 else 
     if [ "$SHOW_FLAG" -eq 1 ]; then echo "<${FILENAME}>"; fi
-    echo  "${OUTPUT}" | pandoc -f latex -t plain --filter ./behead.py
+    echo  "${OUTPUT}" | pandoc -f latex -t plain --filter ./ansify.py
 fi
 
