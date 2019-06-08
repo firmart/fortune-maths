@@ -4,24 +4,34 @@
 
 ## Dependencies
 
-- perl (for markup-ansi conversion) : `sudo apt install perl`
-    - To replace by Pandoc (Haskell)
-- python3 (for cookie/data conversion) : `sudo apt install python3`
-    - To replace by bash
-- fortune (to display data) : `sudo apt install fortune`
+- pandoc (for format conversion) : `sudo apt install pandoc`
+- python3 (for pandoc's filter) : `sudo apt install python3`
+- fortune (to display data) : `sudo apt install fortune fortune-mod`
 
 ## Install
 `sudo make install`
 
+## Options
+
+
+| Option      | Description                                                                                              |
+|-------------|----------------------------------------------------------------------------------------------------------|
+| `-n <N>`    | Show at most `N` proofs. Default : `1000`                                                                |
+| `-s <ERE>`  | **S**earch theorems which match given extended regular expression (ERE, see `man grep`). Default : `"*"` |
+| `-p`        | Show theorem's **p**roof(s).                                                                             |
+| `-l <lang>` | Show only proofs written in `lang` **l**anguage. Default : `"*"`                                         |
+| `-S`        | **S**how theorem's code.                                                                                 |
+| `-P`        | Output the result as a **P**DF.                                                                          |
+| `-L`        | Output the result as **L**aTeX format.                                                                   |
+| `-h`        | Show **h**elp message.                                                                                   |
+
+
 
 ## TODO
 
-1. Add more ansi markup
-    - implement a Pandoc writer derived from `plain`
-2. Describe formats used
+1. Describe formats used
     - use inline bibtex or `bibtex` file for proofs
-3. Explain options
-4. Use pandoc to simplify workflow e.g. `fortune-maths -l -p | pandoc -f latex -t plain`
-5. Release it as an ubuntu package `*.deb`
-6. Install pandoc filter `ansify.py`
+2. Install pandoc filter `ansify.py`
+3. Release it as an ubuntu package `*.deb`
+
 
